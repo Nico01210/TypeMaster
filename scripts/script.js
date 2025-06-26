@@ -24,7 +24,10 @@ function afficherProposition(proposition) {
  * @param {string} score : le score. 
  */
 function afficherEmail(nom, email, score) {
-    let mailto = `mailto:${email}?subject=Partage du score Azertype&body=Salut, je suis ${nom} et je viens de réaliser le score ${score} sur le site d'Azertype !`
+    // Encodage des paramètres pour éviter les problèmes de caractères spéciaux
+    let subject = encodeURIComponent("Partage du score Azertype")
+    let body = encodeURIComponent(`Salut, je suis ${nom} et je viens de réaliser le score ${score} sur le site d'Azertype !`)
+    let mailto = `mailto:${email}?subject=${subject}&body=${body}`
     location.href = mailto
 }
 
@@ -83,15 +86,17 @@ function afficherMessageErreur(message) {
 function gererFormulaire(scoreEmail) {
     try {
         let baliseNom = document.getElementById("nom")
+        let baliseEmail = document.getElementById("email")
+        if (!baliseNom || !baliseEmail) {
+            afficherMessageErreur("Formulaire incomplet : champ nom ou email manquant.")
+            return
+        }
         let nom = baliseNom.value
         validerNom(nom)
-    
-        let baliseEmail = document.getElementById("email")
         let email = baliseEmail.value
         validerEmail(email)
         afficherMessageErreur("")
         afficherEmail(nom, email, scoreEmail)
-
     } catch(erreur) {
         afficherMessageErreur(erreur.message)
     }

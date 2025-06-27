@@ -120,18 +120,26 @@ function lancerJeu() {
     afficherProposition(listeProposition[i])
 
     // Gestion de l'événement click sur le bouton "valider"
-    btnValiderMot.addEventListener("click", () => {
+    function validerMot() {
         if (inputEcriture.value === listeProposition[i]) {
             score++
         }
-        i++
-        afficherResultat(score, i)
+        afficherResultat(score, i + 1)
         inputEcriture.value = ''
+        i++
         if (listeProposition[i] === undefined) {
             afficherProposition("Le jeu est fini")
             btnValiderMot.disabled = true
         } else {
             afficherProposition(listeProposition[i])
+        }
+    }
+
+    btnValiderMot.addEventListener("click", validerMot)
+    inputEcriture.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault()
+            validerMot()
         }
     })
 
@@ -147,8 +155,13 @@ function lancerJeu() {
                 // Sinon nous voulons jouer avec la liste des phrases
                 listeProposition = listePhrases
             }
-            // Et on modifie l'affichage en direct. 
+            // Réinitialisation de la partie
+            i = 0
+            score = 0
+            btnValiderMot.disabled = false
+            afficherResultat(score, i)
             afficherProposition(listeProposition[i])
+            inputEcriture.value = ''
         })
     }
 

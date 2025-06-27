@@ -104,6 +104,19 @@ function gererFormulaire(scoreEmail) {
 }
 
 /**
+ * Mélange un tableau en place (Fisher-Yates)
+ * @param {Array} array 
+ * @returns {Array}
+ */
+function melangerTableau(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+/**
  * Cette fonction lance le jeu. 
  * Elle demande à l'utilisateur de choisir entre "mots" et "phrases" et lance la boucle de jeu correspondante
  */
@@ -112,7 +125,7 @@ function lancerJeu() {
     initAddEventListenerPopup()
     let score = 0
     let i = 0
-    let listeProposition = listeMots
+    let listeProposition = melangerTableau([...listeMots])
 
     let btnValiderMot = document.getElementById("btnValiderMot")
     let inputEcriture = document.getElementById("inputEcriture")
@@ -147,13 +160,10 @@ function lancerJeu() {
     let listeBtnRadio = document.querySelectorAll(".optionSource input")
     for (let index = 0; index < listeBtnRadio.length; index++) {
         listeBtnRadio[index].addEventListener("change", (event) => {
-            // Si c'est le premier élément qui a été modifié, alors nous voulons
-            // jouer avec la listeMots. 
             if (event.target.value === "1") {
-                listeProposition = listeMots
+                listeProposition = melangerTableau([...listeMots])
             } else {
-                // Sinon nous voulons jouer avec la liste des phrases
-                listeProposition = listePhrases
+                listeProposition = melangerTableau([...listePhrases])
             }
             // Réinitialisation de la partie
             i = 0

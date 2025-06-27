@@ -1,3 +1,3 @@
 // Déclaration des tableaux contenant les listes des mots proposés à l'utilisateur
-const listeMots = ["Cachalot", "Pétunia", "Serviette"]
-const listePhrases = ["Pas de panique !", "La vie, l'univers et le reste", "Merci pour le poisson"]
+const listeMots = ["Cachalot", "Pétunia", "Serviette", "Baleine", "Pamplemousse", "Chocolat", "Café", "Lunettes", "Éléphant", "Tortue"]
+const listePhrases = ["Pas de panique !", "La vie, l'univers et le reste", "Merci pour le poisson", "Je suis ton père", "Que la force soit avec toi", "À la recherche du temps perdu", "Le chat est sur le toit", "Un pour tous, tous pour un", "L'amour est dans le pré", "La vie est belle"]

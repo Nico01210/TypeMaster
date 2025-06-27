@@ -1,9 +1,9 @@
-function afficherResultat(score, nbMotsProposes) {
-    // Récupération de la zone dans laquelle on va écrire le score
+function afficherResultat(score, nbMotsProposes, tempsEcoule = null) {
     let spanScore = document.querySelector(".zoneScore span")
-    // Ecriture du texte
-    let affichageScore = `${score} / ${nbMotsProposes}` 
-    // On place le texte à l'intérieur du span. 
+    let affichageScore = `${score} / ${nbMotsProposes}`
+    if (tempsEcoule !== null) {
+        affichageScore += ` | Temps : ${tempsEcoule}s`
+    }
     spanScore.innerText = affichageScore
 }
 
@@ -23,10 +23,14 @@ function afficherProposition(proposition) {
  * @param {string} email : l'email de la personne avec qui il veut partager son score
  * @param {string} score : le score. 
  */
-function afficherEmail(nom, email, score) {
-    // Encodage des paramètres pour éviter les problèmes de caractères spéciaux
+function afficherEmail(nom, email, score, tempsEcoule = null) {
     let subject = encodeURIComponent("Partage du score Azertype")
-    let body = encodeURIComponent(`Salut, je suis ${nom} et je viens de réaliser le score ${score} sur le site d'Azertype !`)
+    let body = `Salut, je suis ${nom} et je viens de réaliser le score ${score}`
+    if (tempsEcoule !== null) {
+        body += ` en ${tempsEcoule} secondes`
+    }
+    body += " sur le site d'Azertype !"
+    body = encodeURIComponent(body)
     let mailto = `mailto:${email}?subject=${subject}&body=${body}`
     location.href = mailto
 }
@@ -83,7 +87,7 @@ function afficherMessageErreur(message) {
  * de la popup de partage et d'appeler l'affichage de l'email avec les bons paramètres.
  * @param {string} scoreEmail 
  */
-function gererFormulaire(scoreEmail) {
+function gererFormulaire(scoreEmail, tempsEcoule = null) {
     try {
         let baliseNom = document.getElementById("nom")
         let baliseEmail = document.getElementById("email")
@@ -96,7 +100,7 @@ function gererFormulaire(scoreEmail) {
         let email = baliseEmail.value
         validerEmail(email)
         afficherMessageErreur("")
-        afficherEmail(nom, email, scoreEmail)
+        afficherEmail(nom, email, scoreEmail, tempsEcoule)
     } catch(erreur) {
         afficherMessageErreur(erreur.message)
     }
@@ -126,14 +130,16 @@ function lancerJeu() {
     let score = 0
     let i = 0
     let listeProposition = melangerTableau([...listeMots])
-
     let btnValiderMot = document.getElementById("btnValiderMot")
     let inputEcriture = document.getElementById("inputEcriture")
+    let debut = null
+    let tempsEcoule = null
 
     afficherProposition(listeProposition[i])
 
     // Gestion de l'événement click sur le bouton "valider"
     function validerMot() {
+        if (debut === null) debut = Date.now()
         if (inputEcriture.value === listeProposition[i]) {
             score++
         }
@@ -141,7 +147,10 @@ function lancerJeu() {
         inputEcriture.value = ''
         i++
         if (listeProposition[i] === undefined) {
+            // Fin de partie
+            tempsEcoule = Math.round((Date.now() - debut) / 1000)
             afficherProposition("Le jeu est fini")
+            afficherResultat(score, i, tempsEcoule)
             btnValiderMot.disabled = true
         } else {
             afficherProposition(listeProposition[i])
@@ -168,6 +177,8 @@ function lancerJeu() {
             // Réinitialisation de la partie
             i = 0
             score = 0
+            debut = null
+            tempsEcoule = null
             btnValiderMot.disabled = false
             afficherResultat(score, i)
             afficherProposition(listeProposition[i])
@@ -180,7 +191,7 @@ function lancerJeu() {
     form.addEventListener("submit", (event) => {
         event.preventDefault()
         let scoreEmail = `${score} / ${i}`
-        gererFormulaire(scoreEmail)
+        gererFormulaire(scoreEmail, tempsEcoule)
     })
 
     afficherResultat(score, i)
